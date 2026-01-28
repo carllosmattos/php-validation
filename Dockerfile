@@ -6,9 +6,10 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libpng-dev \
     libonig-dev \
-    libxml2-dev
-
-RUN docker-php-ext-install pdo pdo_mysql zip mbstring exif pcntl bcmath
+    libxml2-dev \
+    zip \
+    curl \
+    && docker-php-ext-install pdo pdo_mysql zip mbstring exif pcntl bcmath
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
@@ -18,4 +19,10 @@ COPY . .
 
 RUN composer install --no-interaction --prefer-dist
 
-RUN chown -R www-data:www-data /var/www
+RUN chown -R www-data:www-data /var/www \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+
+USER www-data
+
+EXPOSE 9000
+CMD ["php-fpm"]
