@@ -2,20 +2,18 @@
 
 Sistema para cadastro e gestão de clientes da plataforma UHUU, desenvolvido em Laravel com ambiente totalmente dockerizado.
 
-## Como executar o projeto
-
-### Pré-requisitos
+## 🚀 Pré-requisitos
 - Docker
 - Docker Compose
 
-### Subindo a aplicação
+## ⚡ Subindo a aplicação
 
 ```bash
+# Build e start dos containers
 docker compose up -d --build
 
-### Configuração inicial
-docker compose exec app php artisan key:generate
-docker compose exec app php artisan migrate
+# Setup inicial (Windows-friendly)
+docker compose run --rm -u root app bash -c "cp .env.example .env && php artisan key:generate && php artisan migrate && chmod -R 777 storage bootstrap/cache"
 
 ### A aplicação estará disponível em:
 http://localhost:8000
