@@ -1,0 +1,56 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Client\StoreClientRequest;
+use App\Http\Requests\Client\UpdateClientRequest;
+use App\Http\Resources\ClientResource;
+use App\Models\Client;
+use App\Services\ClientService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+
+class ClientController extends Controller
+{
+    public function __construct(
+        private readonly ClientService $clientService
+    ) {}
+
+    public function index(): AnonymousResourceCollection
+    {
+        $clients = $this->clientService->list(
+            perPage: request('per_page', 15)
+        );
+
+        return ClientResource::collection($clients);
+    }
+
+    public function store(StoreClientRequest $request): JsonResponse
+    {
+        $client = $this->clientService->create($request->validated());
+
+        return (new ClientResource($client))
+            ->response()
+            ->setStatusCode(201);
+    }
+
+    public function show(Client $client): ClientResource
+    {
+        return new ClientResource($client);
+    }
+
+    public function update(UpdateClientRequest $request, Client $client): ClientResource
+    {
+        $updated = $this->clientService->update($client, $request->validated());
+
+        return new ClientResource($updated);
+    }
+
+    public function destroy(Client $client): JsonResponse
+    {
+        $this->clientService->delete($client);
+
+        return response()->json(null, 204);
+    }
+}
