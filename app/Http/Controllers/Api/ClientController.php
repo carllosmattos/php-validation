@@ -44,14 +44,14 @@ class ClientController extends Controller
 
     public function update(UpdateClientRequest $request, Client $client): ClientResource
     {
-        $updated = $this->clientService->update($client, $request->validated());
+        $updated = $this->clientService->update($client->id, $request->validated());
 
         return new ClientResource($updated);
     }
 
     public function destroy(Client $client): JsonResponse
     {
-        $this->clientService->delete($client);
+        $this->clientService->delete($client->id);
 
         return response()->json(null, 204);
     }

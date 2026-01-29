@@ -15,6 +15,8 @@ class ClientService
         $this->applyFilters($query, $filters);
         $this->applySort($query, $filters);
 
+        $perPage = $filters['per_page'] ?? $perPage;
+
         return $query->paginate($perPage);
     }
 
@@ -40,32 +42,35 @@ class ClientService
             $query->where('is_active', filter_var($filters['is_active'], FILTER_VALIDATE_BOOLEAN));
         }
 
-        if (!empty($filters['birth_date_from'])) {
-            $query->whereDate('birth_date', '>=', $filters['birth_date_from']);
+        if (!empty($filters['from_birth_date'])) {
+            $query->whereDate('birth_date', '>=', $filters['from_birth_date']);
         }
 
-        if (!empty($filters['birth_date_to'])) {
-            $query->whereDate('birth_date', '<=', $filters['birth_date_to']);
+        if (!empty($filters['to_birth_date'])) {
+            $query->whereDate('birth_date', '<=', $filters['to_birth_date']);
         }
 
-        if (!empty($filters['created_from'])) {
-            $query->whereDate('created_at', '>=', $filters['created_from']);
+        if (!empty($filters['from_created_at'])) {
+            $query->whereDate('created_at', '>=', $filters['from_created_at']);
         }
 
-        if (!empty($filters['created_to'])) {
-            $query->whereDate('created_at', '<=', $filters['created_to']);
+        if (!empty($filters['to_created_at'])) {
+            $query->whereDate('created_at', '<=', $filters['to_created_at']);
         }
     }
 
     private function applySort(Builder $query, array $filters): void
     {
-        $sortBy = $filters['sort_by'] ?? 'created_at';
+        $sortBy = $filters['sort_by'] ?? 'id';
         $sortOrder = $filters['sort_order'] ?? 'desc';
 
         $allowedSorts = ['id', 'name', 'email', 'cpf', 'phone', 'birth_date', 'created_at', 'updated_at'];
 
         if (in_array($sortBy, $allowedSorts)) {
             $query->orderBy($sortBy, strtolower($sortOrder) === 'asc' ? 'asc' : 'desc');
+        } else {
+            // Se campo inválido, usar padrão
+            $query->orderBy('id', 'desc');
         }
     }
 
@@ -81,8 +86,10 @@ class ClientService
         return Client::create($data);
     }
 
-    public function update(Client $client, array $data): Client
+    public function update(int $id, array $data): Client
     {
+        $client = Client::findOrFail($id);
+
         if (isset($data['password'])) {
             $data['password'] = bcrypt($data['password']);
         }
@@ -92,8 +99,9 @@ class ClientService
         return $client->fresh();
     }
 
-    public function delete(Client $client): bool
+    public function delete(int $id): bool
     {
+        $client = Client::findOrFail($id);
         return $client->delete();
     }
 }
