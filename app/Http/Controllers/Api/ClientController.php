@@ -9,6 +9,7 @@ use App\Http\Resources\ClientResource;
 use App\Models\Client;
 use App\Services\ClientService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ClientController extends Controller
@@ -17,10 +18,11 @@ class ClientController extends Controller
         private readonly ClientService $clientService
     ) {}
 
-    public function index(): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
         $clients = $this->clientService->list(
-            perPage: request('per_page', 15)
+            filters: $request->all(),
+            perPage: $request->integer('per_page', 15)
         );
 
         return ClientResource::collection($clients);
