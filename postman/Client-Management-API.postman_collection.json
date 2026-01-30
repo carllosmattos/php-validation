@@ -1,0 +1,326 @@
+{
+  "info": {
+    "name": "Client Management API",
+    "description": "API REST para gerenciamento de clientes com validação de CPF",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "1"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('auth_token', jsonData.data.token);",
+                  "    pm.collectionVariables.set('client_id', jsonData.data.client.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"joao.silva@example.com\",\n    \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "login"]
+            },
+            "description": "Autentica um cliente e retorna um token de acesso"
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/logout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "logout"]
+            },
+            "description": "Invalida o token de acesso atual"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Authenticated User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "me"]
+            },
+            "description": "Retorna os dados do cliente autenticado"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Clients",
+      "item": [
+        {
+          "name": "List Clients",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/clients?per_page=15&sort_by=created_at&sort_order=desc",
+              "host": ["{{base_url}}"],
+              "path": ["api", "clients"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "",
+                  "description": "Filtrar por nome (busca parcial)",
+                  "disabled": true
+                },
+                {
+                  "key": "email",
+                  "value": "",
+                  "description": "Filtrar por email (busca parcial)",
+                  "disabled": true
+                },
+                {
+                  "key": "cpf",
+                  "value": "",
+                  "description": "Filtrar por CPF (busca exata)",
+                  "disabled": true
+                },
+                {
+                  "key": "phone",
+                  "value": "",
+                  "description": "Filtrar por telefone (busca parcial)",
+                  "disabled": true
+                },
+                {
+                  "key": "is_active",
+                  "value": "true",
+                  "description": "Filtrar por status ativo/inativo",
+                  "disabled": true
+                },
+                {
+                  "key": "from_birth_date",
+                  "value": "1990-01-01",
+                  "description": "Data de nascimento inicial (YYYY-MM-DD)",
+                  "disabled": true
+                },
+                {
+                  "key": "to_birth_date",
+                  "value": "2000-12-31",
+                  "description": "Data de nascimento final (YYYY-MM-DD)",
+                  "disabled": true
+                },
+                {
+                  "key": "from_created_at",
+                  "value": "2024-01-01",
+                  "description": "Data de criação inicial (YYYY-MM-DD)",
+                  "disabled": true
+                },
+                {
+                  "key": "to_created_at",
+                  "value": "2024-12-31",
+                  "description": "Data de criação final (YYYY-MM-DD)",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Quantidade de resultados por página"
+                },
+                {
+                  "key": "sort_by",
+                  "value": "created_at",
+                  "description": "Campo para ordenação (name, email, cpf, birth_date, created_at)"
+                },
+                {
+                  "key": "sort_order",
+                  "value": "desc",
+                  "description": "Direção da ordenação (asc, desc)"
+                }
+              ]
+            },
+            "description": "Lista todos os clientes com filtros opcionais e paginação"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Client",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/clients/{{client_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "clients", "{{client_id}}"]
+            },
+            "description": "Retorna os dados de um cliente específico"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Client",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('client_id', jsonData.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Maria Santos\",\n    \"email\": \"maria.santos@example.com\",\n    \"cpf\": \"98765432100\",\n    \"password\": \"password123\",\n    \"birth_date\": \"1995-03-20\",\n    \"phone\": \"11912345678\",\n    \"is_active\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/clients",
+              "host": ["{{base_url}}"],
+              "path": ["api", "clients"]
+            },
+            "description": "Cria um novo cliente"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Client",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Maria Santos Silva\",\n    \"email\": \"maria.santos@example.com\",\n    \"cpf\": \"98765432100\",\n    \"password\": \"newpassword123\",\n    \"birth_date\": \"1995-03-20\",\n    \"phone\": \"11912345678\",\n    \"is_active\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/clients/{{client_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "clients", "{{client_id}}"]
+            },
+            "description": "Atualiza os dados de um cliente"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Client",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/clients/{{client_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "clients", "{{client_id}}"]
+            },
+            "description": "Remove um cliente"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "client_id",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
