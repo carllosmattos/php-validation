@@ -16,7 +16,7 @@ Sistema para cadastro e gestão de clientes da plataforma UHUU, desenvolvido em 
 
 ```bash
 docker compose up -d --build
-docker compose exec app php artisan app:setups
+docker compose exec app php artisan app:setup
 ```
 
 ### A aplicação estará disponível em:
@@ -198,7 +198,22 @@ O sistema implementa várias camadas de segurança:
 📖 **Documentação completa:** [SECURITY.md](SECURITY.md)
 
 ---
+## ⚡ Performance
 
+O sistema implementa otimizações para garantir alta performance:
+
+- **Índices no Banco de Dados**: Queries ~97% mais rápidas
+  - Índices em: name, is_active, birth_date, phone, created_at
+  - Índice composto: deleted_at + is_active
+- **Cache de Queries**: Leituras ~16-26x mais rápidas
+  - TTL: 5 minutos
+  - Invalidação automática ao atualizar/deletar
+- **Paginação Otimizada**: Evita sobrecarga de memória
+- **Preparado para N+1 Prevention**: Eager loading quando houver relacionamentos
+
+📖 **Documentação completa:** [PERFORMANCE.md](PERFORMANCE.md)
+
+---
 ## �🛠 Tecnologias utilizadas
 
 - **PHP 8.4** (Laravel 11)

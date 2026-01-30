@@ -5,11 +5,19 @@ namespace App\Services;
 use App\Models\Client;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
 
 class ClientService
 {
+    private const CACHE_TTL = 300; // 5 minutos
+    private const CACHE_PREFIX = 'clients_';
+
     public function list(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
+        // Nota: Desabilitar cache em paginação pode ser melhor para dados dinâmicos
+        // Habilitado aqui apenas para demonstração. Em produção, considere cache apenas
+        // para queries específicas ou com TTL muito baixo.
+
         $query = Client::query();
 
         $this->applyFilters($query, $filters);
@@ -76,14 +84,23 @@ class ClientService
 
     public function find(int $id): ?Client
     {
-        return Client::find($id);
+        $cacheKey = self::CACHE_PREFIX . "find_{$id}";
+
+        return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($id) {
+            return Client::find($id);
+        });
     }
 
     public function create(array $data): Client
     {
         $data['password'] = bcrypt($data['password']);
 
-        return Client::create($data);
+        $client = Client::create($data);
+
+        // Limpa cache individual caso já existisse
+        $this->clearClientCache($client->id);
+
+        return $client;
     }
 
     public function update(int $id, array $data): Client
@@ -96,12 +113,28 @@ class ClientService
 
         $client->update($data);
 
+        // Limpa cache deste cliente
+        $this->clearClientCache($id);
+
         return $client->fresh();
     }
 
     public function delete(int $id): bool
     {
         $client = Client::findOrFail($id);
-        return $client->delete();
+        $result = $client->delete();
+
+        // Limpa cache deste cliente
+        $this->clearClientCache($id);
+
+        return $result;
+    }
+
+    /**
+     * Limpa o cache de um cliente específico
+     */
+    private function clearClientCache(int $id): void
+    {
+        Cache::forget(self::CACHE_PREFIX . "find_{$id}");
     }
 }

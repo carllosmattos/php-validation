@@ -119,7 +119,7 @@ class ClientFilterAndSortTest extends TestCase
      */
     public function test_can_filter_by_birth_date_from(): void
     {
-        $client = Client::factory()->create();
+        $client = Client::factory()->create(['birth_date' => '1985-05-15']);
         Client::factory()->create(['birth_date' => '1980-01-01']);
         Client::factory()->create(['birth_date' => '1990-06-15']);
         Client::factory()->create(['birth_date' => '2000-12-31']);
@@ -136,7 +136,7 @@ class ClientFilterAndSortTest extends TestCase
      */
     public function test_can_filter_by_birth_date_to(): void
     {
-        $client = Client::factory()->create();
+        $client = Client::factory()->create(['birth_date' => '2005-01-01']);
         Client::factory()->create(['birth_date' => '1980-01-01']);
         Client::factory()->create(['birth_date' => '1990-06-15']);
         Client::factory()->create(['birth_date' => '2000-12-31']);
