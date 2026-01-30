@@ -19,6 +19,7 @@ Sistema para cadastro e gestão de clientes da plataforma UHUU, desenvolvido em 
 cp .env.example .env
 docker compose up -d --build
 docker compose exec app php artisan app:setup
+docker compose exec app php artisan migrate:fresh --seed --seeder=DemoClientSeeder
 ```
 O frontend (Blade/Vite/Tailwind) é instalado e compilado automaticamente ao rodar `docker compose up -d --build`.
 
@@ -44,8 +45,8 @@ curl -X POST http://localhost:8000/api/login \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -d '{
-    "email": "joao.silva@example.com",
-    "password": "password123"
+    "email": "joao@example.com",
+    "password": "password"
   }'
 ```
 
