@@ -4,10 +4,12 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "watch": "vite build --watch"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
+        "alpinejs": "^3.14.8",
         "axios": "^1.11.0",
         "concurrently": "^9.0.1",
         "laravel-vite-plugin": "^2.0.0",
