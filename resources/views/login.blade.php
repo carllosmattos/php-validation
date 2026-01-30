@@ -129,6 +129,9 @@
             <p>Conta de teste:</p>
             <p class="font-mono text-xs mt-1">email: qualquer cliente cadastrado</p>
             <p class="font-mono text-xs">senha: password</p>
+            <div class="mt-4">
+                <a href="{{ route('register') }}" class="text-indigo-600 hover:underline">Não tem conta? Registre-se</a>
+            </div>
         </div>
     </div>
 </div>

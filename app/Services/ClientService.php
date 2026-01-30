@@ -95,7 +95,15 @@ class ClientService
     {
         $data['password'] = bcrypt($data['password']);
 
+        // Cria o Client normalmente
         $client = Client::create($data);
+
+        // Cria o User correspondente
+        \App\Models\User::create([
+            'name' => $client->name,
+            'email' => $client->email,
+            'password' => $client->password,
+        ]);
 
         // Limpa cache individual caso já existisse
         $this->clearClientCache($client->id);

@@ -32,9 +32,10 @@ class ClientController extends Controller
     {
         $client = $this->clientService->create($request->validated());
 
-        return (new ClientResource($client))
-            ->response()
-            ->setStatusCode(201);
+        $resource = new ClientResource($client);
+        $response = $resource->toArray(request());
+        $response['message'] = 'Registro criado com sucesso!';
+        return response()->json($response, 201);
     }
 
     public function show(Client $client): ClientResource

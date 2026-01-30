@@ -12,13 +12,15 @@ Sistema para cadastro e gestão de clientes da plataforma UHUU, desenvolvido em 
 
 ## ⚡ Como executar o projeto
 
+
 ### Setup inicial
 
 ```bash
+cp .env.example .env
 docker compose up -d --build
 docker compose exec app php artisan app:setup
-  O frontend (Blade/Vite/Tailwind) é instalado e compilado automaticamente ao rodar `docker compose up -d --build`.
 ```
+O frontend (Blade/Vite/Tailwind) é instalado e compilado automaticamente ao rodar `docker compose up -d --build`.
 
 ### A aplicação estará disponível em:
 - **Web Application**: http://localhost:8000
