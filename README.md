@@ -183,7 +183,23 @@ docker compose exec app php artisan test
 
 ---
 
-## 🛠 Tecnologias utilizadas
+## � Segurança
+
+O sistema implementa várias camadas de segurança:
+
+- **Rate Limiting**: Proteção contra abuso e brute-force
+  - Login: 5 tentativas/minuto
+  - API geral: 60 requisições/minuto
+  - Criação de clientes: 10 criações/minuto
+- **Sanitização de Inputs**: Proteção contra XSS
+- **Logs de Auditoria**: Rastreamento completo de ações (criação, atualização, exclusão)
+- **Validação de CPF**: Algoritmo de verificação de dígitos verificadores
+
+📖 **Documentação completa:** [SECURITY.md](SECURITY.md)
+
+---
+
+## �🛠 Tecnologias utilizadas
 
 - **PHP 8.4** (Laravel 11)
 - **MySQL 8.0**
