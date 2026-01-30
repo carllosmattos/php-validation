@@ -130,6 +130,26 @@ class ClientService
         return $result;
     }
 
+    public function deleteMany(array $ids): int
+    {
+        // Valida que todos os IDs existem
+        $clients = Client::whereIn('id', $ids)->get();
+
+        if ($clients->count() !== count($ids)) {
+            throw new \InvalidArgumentException('Um ou mais IDs não foram encontrados.');
+        }
+
+        // Deleta em massa
+        $deletedCount = Client::whereIn('id', $ids)->delete();
+
+        // Limpa cache de todos os clientes deletados
+        foreach ($ids as $id) {
+            $this->clearClientCache($id);
+        }
+
+        return $deletedCount;
+    }
+
     /**
      * Limpa o cache de um cliente específico
      */

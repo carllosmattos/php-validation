@@ -55,4 +55,25 @@ class ClientController extends Controller
 
         return response()->json(null, 204);
     }
+
+    public function destroyMany(Request $request): JsonResponse
+    {
+        $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'required|integer|exists:clients,id',
+        ]);
+
+        try {
+            $deletedCount = $this->clientService->deleteMany($request->input('ids'));
+
+            return response()->json([
+                'message' => "{$deletedCount} cliente(s) deletado(s) com sucesso.",
+                'deleted_count' => $deletedCount,
+            ], 200);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 404);
+        }
+    }
 }
